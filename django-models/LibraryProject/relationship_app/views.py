@@ -9,7 +9,7 @@ def BookView(request):
 
 
 class LibraryBookView(DetailView):
-    template_name = "relationship_app/library_detail.y"
+    template_name = "relationship_app/library_detail.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
