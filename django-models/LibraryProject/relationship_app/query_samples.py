@@ -1,9 +1,9 @@
 from .models import Book, Library
 
-books = Book.objects.filter(author="Mike Dane")
+books = Book.objects.filter(author=author_name)
 
-library = Library.objects.get(name="Main Library")
+library = Library.objects.get(name=library_name)
 library_books = library.books.all()
 
-library = Library.objects.get(name="Main Library")
+library = Library.objects.get(name=library_name)
 librarian = library.librarian
