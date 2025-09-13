@@ -1,7 +1,8 @@
 # from typing import Any
 from django.shortcuts import render
 from django.views.generic import DetailView
-from .models import Book, Library
+from .models import Library
+from .models import Book
 # Create your views here.
 def BookView(request):
     return render(request, 'relationship_app/list_books.html')
