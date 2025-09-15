@@ -22,7 +22,7 @@ class LibraryDetailView(DetailView):
         context['library'] = Library.objects.all()
         return context
     
-class SignUpView(CreateView):
+class Register(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'relationship_app/register.html'
