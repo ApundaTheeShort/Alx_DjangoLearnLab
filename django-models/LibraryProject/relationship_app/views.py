@@ -6,7 +6,8 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout, login
+from django.contrib.auth import login
+from django.contrib.auth import logout
 # Create your views here.
 
 def home(request):
