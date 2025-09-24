@@ -5,9 +5,7 @@ from django.contrib.auth.decorators import user_passes_test, permission_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
-from django.contrib.auth import logout
 # Create your views here.
 
 def home(request):
@@ -88,37 +86,13 @@ def change_book(request, pk):
 def delete_book(request, pk):
     return BookDelete.as_view()(request, pk=pk)
 
-
-def logout_view(request):
-    logout(request)
-    return redirect('login')
-
-class CustomLoginView(LoginView):
-    template_name = 'relationship_app/login.html'
-
-    def get_success_url(self):
-        user = self.request.user
-        if hasattr(user, 'userprofile'):
-            if user.userprofile.role == 'Admin':
-                return reverse_lazy('admin_view')
-            elif user.userprofile.role == 'Librarian':
-                return reverse_lazy('librarian_view')
-        return reverse_lazy('member_view')
-
-class RegisterView(CreateView):
-    form_class = UserCreationForm
-    template_name = 'relationship_app/register.html'
-    
-    def get_success_url(self):
-        return reverse_lazy('login')
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
-        return response
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form_title'] = 'Register'
-        return context
-    
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home') # Redirect to home or a success page
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form, 'form_title': 'Register'})
