@@ -4,7 +4,9 @@ from .models import Book, Library
 from django.contrib.auth.decorators import user_passes_test, permission_required
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout, login
 # Create your views here.
 
 def home(request):
@@ -85,9 +87,6 @@ def change_book(request, pk):
 def delete_book(request, pk):
     return BookDelete.as_view()(request, pk=pk)
 
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout, login
 
 def logout_view(request):
     logout(request)
@@ -121,3 +120,4 @@ class RegisterView(CreateView):
         context = super().get_context_data(**kwargs)
         context['form_title'] = 'Register'
         return context
+    
