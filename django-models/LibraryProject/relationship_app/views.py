@@ -87,7 +87,7 @@ def delete_book(request, pk):
 
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 
 def logout_view(request):
     logout(request)
@@ -96,7 +96,28 @@ def logout_view(request):
 class CustomLoginView(LoginView):
     template_name = 'relationship_app/login.html'
 
+    def get_success_url(self):
+        user = self.request.user
+        if hasattr(user, 'userprofile'):
+            if user.userprofile.role == 'Admin':
+                return reverse_lazy('admin_view')
+            elif user.userprofile.role == 'Librarian':
+                return reverse_lazy('librarian_view')
+        return reverse_lazy('member_view')
+
 class RegisterView(CreateView):
     form_class = UserCreationForm
     template_name = 'relationship_app/register.html'
-    success_url = reverse_lazy('login')
+    
+    def get_success_url(self):
+        return reverse_lazy('login')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.object)
+        return response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_title'] = 'Register'
+        return context
