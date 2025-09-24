@@ -22,6 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('bookshelf/', include("bookshelf.urls")),
     path('relationship_app/', include('relationship_app.urls')),
-    path('auth/', include('relationship_app.auth_urls')),
     path("", views.home, name="home"),
 ]

@@ -8,6 +8,7 @@ from .views import (
     add_book,
     change_book,
     delete_book,
+    CustomLoginView, RegisterView, logout_view
 )
 
 urlpatterns = [
@@ -19,4 +20,7 @@ urlpatterns = [
     path('book/add/', add_book, name='add_book'),
     path('book/<int:pk>/change/', change_book, name='change_book'),
     path('book/<int:pk>/delete/', delete_book, name='delete_book'),
+    path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('register/', RegisterView.as_view(), name='register'),
 ]
