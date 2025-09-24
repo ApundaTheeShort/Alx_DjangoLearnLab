@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>home</title>
-  </head>
-  <body>
-    <h1>Welcome</h1>
-    <a href="{% url 'logout' %}">LOGOUT NOW</a>
-    block
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Welcome to the Library Project</h1>
+    <p>This project demonstrates various features of Django, including models, views, templates, and user authentication.</p>
+
+    <h2>Available Routes:</h2>
+    <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'admin:index' %}">Admin</a></li>
+        <li><a href="{% url 'index' %}">Bookshelf</a></li>
+        <li><a href="{% url 'list_books' %}">List Books</a></li>
+        <li><a href="{% url 'admin_view' %}">Admin View</a></li>
+        <li><a href="{% url 'librarian_view' %}">Librarian View</a></li>
+        <li><a href="{% url 'member_view' %}">Member View</a></li>
+        <li><a href="{% url 'add_book' %}">Add Book</a></li>
+    </ul>
+
+    <h2>Authentication:</h2>
+    <ul>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Login</a></li>
+            <li><a href="{% url 'register' %}">Register</a></li>
+        {% endif %}
+    </ul>
+</body>
 </html>
