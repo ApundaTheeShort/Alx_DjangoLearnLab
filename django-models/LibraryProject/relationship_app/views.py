@@ -1,11 +1,13 @@
 # from typing import Any
 from django.contrib.auth import login
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import UserCreationForm
 from .models import Library
 from .models import Book
+from .import utils
 # Create your views here.
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
@@ -19,7 +21,7 @@ def list_books(request):
 class LibraryDetailView(DetailView):
     template_name = "relationship_app/library_detail.html"
 
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+    def get_context_data(self, **kwargs: Book) -> dict[str, Book]:
         context = super().get_context_data(**kwargs)
         context['books'] = Book.objects.all()
         context['library'] = Library.objects.all()
@@ -46,26 +48,17 @@ def register(request):
     return render(request, "relationship_app/register.html", {"form": form})
 
 
-@user_passes_test(lambda u: u.userprofile.role == 'Admin')
+@user_passes_test(utils.is_admin)
 def admin_view(request):
     return render(request, 'relationship_app/admin_view.html')
 
 
-# def is_admin(user):
-#     return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
-
-def is_librarian(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
-
-def is_member(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
 
 
-
-@user_passes_test(is_librarian)
+@user_passes_test(utils.is_librarian)
 def librarian_view(request):
     return render(request, 'relationship_app/librarian_view.html')
 
-@user_passes_test(is_member)
+@user_passes_test(utils.is_member)
 def member_view(request):
     return render(request, 'relationship_app/member_view.html')
