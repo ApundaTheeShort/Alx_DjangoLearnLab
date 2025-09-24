@@ -7,5 +7,5 @@ from .utils import is_admin
 #     return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
 
 @user_passes_test(is_admin)
-def admin_view(request):
+def admin_dashboard(request):
     return render(request, 'relationship_app/admin_view.html')
