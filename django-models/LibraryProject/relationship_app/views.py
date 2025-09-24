@@ -80,7 +80,11 @@ def add_book(request):
     return BookCreate.as_view()(request)
 
 @permission_required('relationship_app.can_change_book')
-def change_book(request, pk):
+def change_book(request):
+    pk = request.GET.get('pk')
+    if not pk:
+        # Handle error: pk not provided, maybe redirect to a list or error page
+        return redirect('list_books') # Or render an error message
     return BookUpdate.as_view()(request, pk=pk)
 
 @permission_required('relationship_app.can_delete_book')
