@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView
-from .models import Book, Library
+from .models import Library
+from .models import Book
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -80,11 +81,7 @@ def add_book(request):
     return BookCreate.as_view()(request)
 
 @permission_required('relationship_app.can_change_book')
-def change_book(request):
-    pk = request.GET.get('pk')
-    if not pk:
-        # Handle error: pk not provided, maybe redirect to a list or error page
-        return redirect('list_books') # Or render an error message
+def change_book(request, pk):
     return BookUpdate.as_view()(request, pk=pk)
 
 @permission_required('relationship_app.can_delete_book')
