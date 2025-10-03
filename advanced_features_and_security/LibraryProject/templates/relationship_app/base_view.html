@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Dashboard{% endblock %}</title>
+  </head>
+  <body>
+    <header>
+      <h1>{% block header %}Welcome{% endblock %}</h1>
+      {% if user.is_authenticated %}
+      <p>Logged in as <strong>{{ user.username }}</strong></p>
+      <form action="{% url 'logout' %}" method="post" style="display: inline">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+      </form>
+      {% endif %}
+    </header>
+
+    <main>
+      {% block content %}
+      <!-- Role-specific content goes here -->
+      {% endblock %}
+    </main>
+  </body>
+</html>
