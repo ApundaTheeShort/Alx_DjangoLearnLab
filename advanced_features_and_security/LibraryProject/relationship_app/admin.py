@@ -1,19 +1,25 @@
 from django.contrib import admin
-
-# Register your models here.
-from . import models
-
-admin.site.register(models.Author)
-admin.site.register(models.Book)
-admin.site.register(models.Librarian)
-admin.site.register(models.Library)
+from django.contrib.auth.admin import UserAdmin
+from .models import CustomUser, Author, Book, Librarian, Library
 
 
-class CustomUserModel(admin.ModelAdmin):
-    list_display = ('email', 'username', 'is_active',
-                    'is_staff', 'date_joined')
-    search_fields = ('email', 'username')
-    list_filter = ('is_active', 'is_staff', 'date_joined')
+class CustomUserAdmin(UserAdmin):
+    model = CustomUser
+    list_display = ["email", "username",
+                    "date_of_birth", "is_staff", "is_superuser"]  # Added date_of_birth
+
+    # Add to fieldsets
+    fieldsets = UserAdmin.fieldsets + (
+        (None, {'fields': ('date_of_birth', 'profile_photo')}),
+    )
+    # Add to add_fieldsets
+    add_fieldsets = UserAdmin.add_fieldsets + (
+        (None, {'fields': ('date_of_birth', 'profile_photo')}),
+    )
 
 
-admin.site.register(models.CustomUser, CustomUserModel)
+admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(Author)
+admin.site.register(Book)
+admin.site.register(Librarian)
+admin.site.register(Library)

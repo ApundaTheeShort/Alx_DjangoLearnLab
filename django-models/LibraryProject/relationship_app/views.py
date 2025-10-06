@@ -18,7 +18,7 @@ def list_books(request):
     Function-based view to list all books.
     """
     books = Book.objects.all()
-    return render(request, 'relationship_app/list_books.html', {'books': books})
+    return render(request,"relationship_app/list_books.html", {'books': books})
 
 class LibraryDetailView(DetailView):
     """
@@ -27,6 +27,19 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = 'relationship_app/library_detail.html'
     context_object_name = 'library'
+    
+    
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home') # Redirect to home or a success page
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form, 'form_title': 'Register'})
+
 
 def is_admin(user):
     return user.is_authenticated and hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
@@ -59,6 +72,7 @@ class BookCreate(CreateView):
         context = super().get_context_data(**kwargs)
         context['form_title'] = 'Add Book'
         return context
+    
 
 class BookUpdate(UpdateView):
     model = Book
@@ -88,13 +102,3 @@ def change_book(request, pk):
 def delete_book(request, pk):
     return BookDelete.as_view()(request, pk=pk)
 
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('home') # Redirect to home or a success page
-    else:
-        form = UserCreationForm()
-    return render(request, 'relationship_app/register.html', {'form': form, 'form_title': 'Register'})
