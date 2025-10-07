@@ -17,8 +17,12 @@ def list_books(request):
     """
     Function-based view to list all books.
     """
-    books = Book.objects.all()
-    return render(request,"relationship_app/list_books.html", {'books': books})
+    query = request.GET.get('q')
+    if query:
+        books = Book.objects.filter(title__icontains=query)
+    else:
+        books = Book.objects.all()
+    return render(request, "relationship_app/list_books.html", {'books': books})
 
 class LibraryDetailView(DetailView):
     """
