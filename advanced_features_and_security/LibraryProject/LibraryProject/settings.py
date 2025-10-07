@@ -138,15 +138,16 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Set to True to ensure cookies are only sent over HTTPS (for secure cookies connections)
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-
 # Configuring Django to support HTTPS settings
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
+# Set to True to ensure cookies are only sent over HTTPS (for secure cookies connections)
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 
 # Prevents the browser from interpreting files as a different MIME type
 SECURE_CONTENT_TYPE_NOSNIFF = True
