@@ -152,6 +152,7 @@ SESSION_COOKIE_SECURE = True
 # Prevents the browser from interpreting files as a different MIME type
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Content Security Policy settings
 CONTENT_SECURITY_POLICY = {
