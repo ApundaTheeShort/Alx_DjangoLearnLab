@@ -1,9 +1,15 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from bookshelf.models import CustomUser
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
+from .models import CustomUser
 
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
+        model = CustomUser
+        fields = ('username', 'email', 'date_of_birth', 'profile_photo')
+
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm.Meta):
         model = CustomUser
         fields = ('username', 'email', 'date_of_birth', 'profile_photo')
 
