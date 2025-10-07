@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
+from .forms import ExampleForm
 
 from .models import Book
 # Create your views here.
@@ -35,3 +36,19 @@ def delete_book(request, book_id):
         return HttpResponse("Book deleted successfully.")
 
     return render(request, 'bookshelf/book_confirm_delete.html', {'book': book})
+
+#  Example view to demonstrate the use of ExampleForm
+
+
+@login_required
+def example_form_view(request):
+    if request.method == 'POST':
+        form = ExampleForm(request.POST)
+        if form.is_valid():
+            char_field = form.cleaned_data['char_field']
+            email_field = form.cleaned_data['email_field']
+            return HttpResponse(f"Received: {char_field}, {email_field}")
+    else:
+        form = ExampleForm()
+
+    return render(request, 'bookshelf/form_example.html', {'form': form})
