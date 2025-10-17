@@ -1,6 +1,6 @@
 from rest_framework import generics
+from .serializers import BookSerializer
 from .models import Book
-from .serializer import BookSerializer
 # Create your views here.
 
 
