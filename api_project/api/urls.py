@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import BookViewSet
 from .views import BookList
+from rest_framework.authtoken import views as drf_auth_views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -13,4 +14,8 @@ urlpatterns = [
     # Include the router URLs for BookViewSet (all CRUD operations)s
     # This includes all routes registered with the router
     path('', include(router.urls)),
+]
+
+urlpatterns += [
+    path('api-token-auth/', drf_auth_views.obtain_auth_token),
 ]

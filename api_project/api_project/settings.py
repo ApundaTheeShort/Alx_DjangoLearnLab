@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
 ]
 
@@ -122,3 +123,17 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Django REST Framework settings for authentication and permissions.
+REST_FRAMEWORK = {
+    # Set TokenAuthentication as the default authentication scheme.
+    # This means that clients must include a valid token in the 'Authorization' header
+    # (e.g., 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b') to authenticate.
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication'
+    ],
+    # By default, no permission class is specified, which means that any authenticated user
+    # will have access to the API endpoints. To restrict access, you can set a default
+    # permission class here (e.g., 'rest_framework.permissions.IsAuthenticated') or
+    # specify permission classes on a per-view basis.
+}
