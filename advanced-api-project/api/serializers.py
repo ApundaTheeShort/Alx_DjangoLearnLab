@@ -33,7 +33,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     The 'books' field is a read-only field that gets its value from the reverse relationship
     on the Author model (book_set).
     """
-    books = BookSerializer(many=True, read_only=True, source='book_set')
+    books = BookSerializer(many=True, read_only=True)
 
     class Meta:
         model = Author
