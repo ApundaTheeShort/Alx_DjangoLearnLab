@@ -1,6 +1,7 @@
 from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
 from rest_framework import generics, serializers
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.utils import timezone
 
 
@@ -13,6 +14,7 @@ class ListView(generics.ListAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class DetailView(generics.RetrieveAPIView):
@@ -24,6 +26,7 @@ class DetailView(generics.RetrieveAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 
 class CreateView(generics.CreateAPIView):
@@ -35,6 +38,7 @@ class CreateView(generics.CreateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
 
     def validate(self, data):
         """
@@ -55,6 +59,7 @@ class CreateAuthorView(generics.CreateAPIView):
     """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class UpdateView(generics.UpdateAPIView):
@@ -66,6 +71,7 @@ class UpdateView(generics.UpdateAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
 
     def validate(self, data):
         """
@@ -85,3 +91,4 @@ class DeleteView(generics.DestroyAPIView):
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
+    permission_classes = [IsAuthenticated]
