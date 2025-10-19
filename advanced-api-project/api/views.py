@@ -2,7 +2,15 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from .serializers import AuthorSerializer, BookSerializer
 from rest_framework import generics, serializers
 from django.utils import timezone
+from django_filters import rest_framework as filters
 from .models import Author, Book
+
+
+class BookFilter(filters.CharFilter):
+    title = filters.CharFilter(field_name='title', lookup_expr='icontains')
+    publication_year = filters.NumberFilter(field_name='publication_year')
+    author = filters.CharFilter(
+        field_name='author__name', lookup_expr='icontains')
 
 
 class ListView(generics.ListAPIView):
@@ -35,6 +43,7 @@ class ListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
     ordering_fields = ['publication_year', 'title', 'author']
     search_fields = ['title', 'author']
+    filterset_class = BookFilter
 
 
 class DetailView(generics.RetrieveAPIView):
