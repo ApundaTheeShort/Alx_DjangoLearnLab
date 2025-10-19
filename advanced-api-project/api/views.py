@@ -11,10 +11,30 @@ class ListView(generics.ListAPIView):
 
     This view handles GET requests and returns a list of all Book instances
     serialized using the BookSerializer.
+
+    **Filtering, Searching, and Ordering:**
+
+    This view supports filtering, searching, and ordering of the results.
+
+    **Filtering:**
+    - Filter by publication year: `?publication_year=<year>`
+    - Example: `?publication_year=2023`
+
+    **Searching:**
+    - Search by title and author: `?search=<term>`
+    - Example: `?search=Django`
+
+    **Ordering:**
+    - Order by publication year, title, or author: `?ordering=<field>`
+    - Prepend the field with a `-` for descending order.
+    - Example (ascending by title): `?ordering=title`
+    - Example (descending by publication year): `?ordering=-publication_year`
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+    ordering_fields = ['publication_year', 'title', 'author']
+    search_fields = ['title', 'author']
 
 
 class DetailView(generics.RetrieveAPIView):
@@ -72,6 +92,7 @@ class UpdateView(generics.UpdateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
+    search_fields = ['title', 'author']
 
     def validate(self, data):
         """
@@ -92,3 +113,4 @@ class DeleteView(generics.DestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAuthenticated]
+    search_fields = ['title', 'author']
