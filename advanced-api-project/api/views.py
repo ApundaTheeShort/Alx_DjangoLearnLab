@@ -1,8 +1,8 @@
-from .models import Author, Book
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from .serializers import AuthorSerializer, BookSerializer
 from rest_framework import generics, serializers
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from django.utils import timezone
+from .models import Author, Book
 
 
 class ListView(generics.ListAPIView):
