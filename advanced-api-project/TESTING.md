@@ -13,10 +13,11 @@ The testing strategy focuses on ensuring the reliability and security of the API
 - **Authentication and Authorization**: Tests verify that protected endpoints require authentication and that users can only access resources they are permitted to.
 - **CRUD Operations**: Tests cover the Create, Read, Update, and Delete operations for each model to ensure they function as expected.
 - **Validation**: Tests check that the API correctly handles both valid and invalid data, returning appropriate error messages when validation fails.
+- **Filtering, Searching, and Ordering**: Tests verify that the API correctly filters, searches, and orders results based on query parameters.
 
 ## Individual Test Cases
 
-The following test cases are implemented in `api/tests.py`:
+The following test cases are implemented in `api/test_views.py`:
 
 - **`test_book_list_unauthenticated`**: Verifies that unauthenticated users can retrieve a list of all books.
 - **`test_book_detail_unauthenticated`**: Ensures that unauthenticated users can retrieve a single book by its ID.
@@ -26,6 +27,9 @@ The following test cases are implemented in `api/tests.py`:
 - **`test_update_book_unauthenticated`**: Ensures that unauthenticated users are forbidden from updating a book.
 - **`test_delete_book_authenticated`**: Confirms that authenticated users can delete a book.
 - **`test_delete_book_unauthenticated`**: Checks that unauthenticated users are forbidden from deleting a book.
+- **`test_filter_by_publication_year`**: Verifies that the API can filter books by publication year.
+- **`test_search_by_title`**: Ensures that the API can search for books by title.
+- **`test_order_by_title`**: Confirms that the API can order books by title.
 
 ## Running Tests
 
