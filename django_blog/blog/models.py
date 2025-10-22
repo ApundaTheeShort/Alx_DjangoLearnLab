@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User, AbstractUser, BaseUserManager
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -59,3 +60,6 @@ class Post(models.Model):
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    def get_absolute_url(self):
+        return reverse('post-detail', kwargs={'pk': self.pk})

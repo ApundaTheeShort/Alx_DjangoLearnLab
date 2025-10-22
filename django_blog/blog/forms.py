@@ -1,18 +1,23 @@
 from django import forms
+from .models import CustomUser, Post
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
 
 
 class UserRegisterForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
+    email = forms.EmailField()
+
+    class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'first_name', 'last_name')
+        fields = ['username', 'first_name', 'last_name', 'email']
 
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ('email', 'first_name', 'last_name', 'bio', 'profile_picture')
+        fields = ['first_name', 'last_name', 'email', 'bio', 'profile_picture']
 
 
-class
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
