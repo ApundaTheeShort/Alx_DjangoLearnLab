@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from rest_framework import generics, viewsets
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, UpdateView
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .forms import UserRegisterForm, ProfileUpdateForm, PostForm
-from .models import Post, CustomUser
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
+from .forms import UserRegisterForm, ProfileUpdateForm, PostForm, CommentForm
+from .models import Post, CustomUser, Comment
 from .serializers import PostSerializer, CustomUserSerializer
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 
 def home(request):
@@ -49,7 +49,7 @@ def profile(request):
     return render(request, 'blog/profile.html', context)
 
 
-class CreateView(CreateView, LoginRequiredMixin):
+class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
@@ -59,7 +59,7 @@ class CreateView(CreateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class UpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     form_class = PostForm
     template_name = 'blog/post_form.html'
@@ -67,6 +67,71 @@ class UpdateView(UpdateView, LoginRequiredMixin, UserPassesTestMixin):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        comments = post.comments.all().order_by('-published_date')
+        context['comments'] = comments
+        context['comment_form'] = CommentForm()
+        return context
+
+
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/post_detail.html'  # We will render on the post detail page
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        comment = self.get_object()
+        if self.request.user == comment.author:
+            return True
+        return False
+
+
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'blog/comment_confirm_delete.html'
+
+    def get_success_url(self):
+        comment = self.get_object()
+        return reverse('post-detail', kwargs={'pk': comment.post.pk})
+
+    def test_func(self):
+        comment = self.get_object()
+        if self.request.user == comment.author:
+            return True
+        return False
 
 
 class ListView(generics.ListAPIView):
@@ -79,16 +144,19 @@ class DetailView(generics.RetrieveAPIView):
     serializer_class = PostSerializer
 
 
-class DeleteView(generics.DestroyAPIView):
+class CreateView(generics.CreateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-    def validate(self, attrs):
-        instance = self.get_object()
-        if instance.author != self.request.user:
-            raise PermissionDenied(
-                "You do not have permission to delete this post.")
-        return super().validate(attrs)
+
+class UpdateView(generics.UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class DeleteView(generics.DestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 # class CreateView(generics.CreateAPIView):
 #     queryset = Post.objects.all()
