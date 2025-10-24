@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from rest_framework import generics, viewsets
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import CreateView, UpdateView, DetailView, DeleteView, ListView
 from .forms import UserRegisterForm, ProfileUpdateForm, PostForm, CommentForm
 from .models import Post, CustomUser, Comment
 from .serializers import PostSerializer, CustomUserSerializer
@@ -14,6 +14,20 @@ def tagged(request, tag_slug):
     tag = get_object_or_404(Tag, slug=tag_slug)
     posts = Post.objects.filter(tags=tag)
     return render(request, 'blog/tagged.html', {'posts': posts, 'tag': tag})
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = 'blog/tagged.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        self.tag = get_object_or_404(Tag, slug=self.kwargs['tag_slug'])
+        return Post.objects.filter(tags=self.tag)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.tag
+        return context
 
 def search(request):
     query = request.GET.get('q')
