@@ -10,10 +10,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from taggit.models import Tag
 
+
 def tagged(request, tag_slug):
     tag = get_object_or_404(Tag, slug=tag_slug)
     posts = Post.objects.filter(tags=tag)
     return render(request, 'blog/tagged.html', {'posts': posts, 'tag': tag})
+
 
 class PostByTagListView(ListView):
     model = Post
@@ -28,6 +30,7 @@ class PostByTagListView(ListView):
         context = super().get_context_data(**kwargs)
         context['tag'] = self.tag
         return context
+
 
 def search(request):
     query = request.GET.get('q')
@@ -126,7 +129,8 @@ class PostDetailView(DetailView):
 class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     form_class = CommentForm
-    template_name = 'blog/post_detail.html'  # We will render on the post detail page
+    # We will render on the post detail page
+    template_name = 'blog/post_detail.html'
 
     def form_valid(self, form):
         post = get_object_or_404(Post, pk=self.kwargs.get('pk'))
