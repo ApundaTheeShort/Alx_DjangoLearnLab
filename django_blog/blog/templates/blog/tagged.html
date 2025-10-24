@@ -1,9 +1,10 @@
 {% extends "blog/base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Posts tagged with "{{ tag.name }}"{% endblock %}
 
 {% block content %}
-  <h2>Recent Posts</h2>
+  <h2>Posts tagged with "{{ tag.name }}"</h2>
+
   {% for post in posts %}
     <article class="media content-section">
       <div class="media-body">
@@ -16,6 +17,6 @@
       </div>
     </article>
   {% empty %}
-    <p>No posts found.</p>
+    <p>No posts found for this tag.</p>
   {% endfor %}
 {% endblock %}

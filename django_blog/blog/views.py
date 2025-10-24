@@ -7,14 +7,35 @@ from .forms import UserRegisterForm, ProfileUpdateForm, PostForm, CommentForm
 from .models import Post, CustomUser, Comment
 from .serializers import PostSerializer, CustomUserSerializer
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
+from taggit.models import Tag
+
+def tagged(request, tag_slug):
+    tag = get_object_or_404(Tag, slug=tag_slug)
+    posts = Post.objects.filter(tags=tag)
+    return render(request, 'blog/tagged.html', {'posts': posts, 'tag': tag})
+
+def search(request):
+    query = request.GET.get('q')
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.none()
+    return render(request, 'blog/search_results.html', {'posts': posts, 'query': query})
 
 
 def home(request):
-    return render(request, 'blog/home.html')
+    posts = Post.objects.order_by('-published_date')[:5]
+    return render(request, 'blog/home.html', {'posts': posts})
 
 
 def posts(request):
-    return render(request, 'blog/posts.html')
+    posts = Post.objects.all()
+    return render(request, 'blog/posts.html', {'posts': posts})
 
 
 def register(request):
@@ -82,7 +103,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.get_object()
-        comments = post.comments.all().order_by('-published_date')
+        comments = post.comments.all().order_by('-created_at')
         context['comments'] = comments
         context['comment_form'] = CommentForm()
         return context

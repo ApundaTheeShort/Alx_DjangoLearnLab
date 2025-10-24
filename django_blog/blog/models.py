@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, AbstractUser, BaseUserManager
 from django.db import models
 from django.urls import reverse
+from taggit.managers import TaggableManager
 
 # Create your models here.
 
@@ -32,7 +33,8 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     bio = models.TextField(blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pics', blank=True, null=True)
+    profile_picture = models.ImageField(
+        upload_to='profile_pics', blank=True, null=True)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -55,28 +57,22 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    tags = TaggableManager()
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
-
-
-class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    content = models.TextField()
-    published_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Comment by {self.author} on {self.post}'
-
-    def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.post.pk})
-
 
 
 class Comment(models.Model):
