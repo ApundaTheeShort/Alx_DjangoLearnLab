@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
-from django.shortcuts import get_object_or_404 # New import
+from django.shortcuts import get_object_or_404
+
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -18,6 +19,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -35,6 +37,7 @@ class CommentViewSet(viewsets.ModelViewSet):
                 target=comment.post
             )
 
+
 class FeedView(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -43,10 +46,9 @@ class FeedView(generics.ListAPIView):
         following_users = self.request.user.following.all()
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
 
+
 class LikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    # queryset = Post.objects.all() # Removed
-    # lookup_field = 'pk' # Removed
 
     def post(self, request, *args, **kwargs):
         post = get_object_or_404(Post, pk=kwargs['pk'])
@@ -67,10 +69,9 @@ class LikePostView(generics.GenericAPIView):
             )
         return Response(status=status.HTTP_201_CREATED)
 
+
 class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    # queryset = Post.objects.all() # Removed
-    # lookup_field = 'pk' # Removed
 
     def post(self, request, *args, **kwargs):
         post = get_object_or_404(Post, pk=kwargs['pk'])
