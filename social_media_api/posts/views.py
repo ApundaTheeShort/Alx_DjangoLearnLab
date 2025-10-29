@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
-from django.shortcuts import get_object_or_404
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -49,15 +48,17 @@ class FeedView(generics.ListAPIView):
 
 class LikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Post.objects.all()
+    lookup_field = 'pk'
 
     def post(self, request, *args, **kwargs):
-        post = get_object_or_404(Post, pk=kwargs['pk'])
+        post = self.get_object()
         user = request.user
 
-        like, created = Like.objects.get_or_create(user=user, post=post)
-
-        if not created:
+        if Like.objects.filter(user=user, post=post).exists():
             return Response({"detail": "You have already liked this post."}, status=status.HTTP_400_BAD_REQUEST)
+
+        Like.objects.create(user=user, post=post)
 
         # Create notification for the post author
         if user != post.author:
@@ -72,9 +73,11 @@ class LikePostView(generics.GenericAPIView):
 
 class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Post.objects.all()
+    lookup_field = 'pk'
 
     def post(self, request, *args, **kwargs):
-        post = get_object_or_404(Post, pk=kwargs['pk'])
+        post = self.get_object()
         user = request.user
 
         like = Like.objects.filter(user=user, post=post)
