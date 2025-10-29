@@ -1,18 +1,18 @@
-from rest_framework import permissions, status
+# This file contains generics.GenericAPIView
+from rest_framework import generics, permissions, status, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from .models import CustomUser
 from django.contrib.auth import get_user_model
-from rest_framework.generics import GenericAPIView
 
-class UserRegistrationView(GenericAPIView):
+class UserRegistrationView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
-    def create(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -36,7 +36,7 @@ class UserLoginView(ObtainAuthToken):
             'email': user.email
         })
 
-class UserProfileView(GenericAPIView):
+class UserProfileView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, generics.GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -44,7 +44,16 @@ class UserProfileView(GenericAPIView):
     def get_object(self):
         return self.request.user
 
-class FollowUserView(GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+class FollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
     lookup_field = 'pk'
@@ -56,7 +65,7 @@ class FollowUserView(GenericAPIView):
         request.user.following.add(user_to_follow)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class UnfollowUserView(GenericAPIView):
+class UnfollowUserView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
     lookup_field = 'pk'
