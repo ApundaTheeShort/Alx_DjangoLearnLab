@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer
 from .models import CustomUser
 from django.contrib.auth import get_user_model
+from notifications.models import Notification # New import
 
 class UserRegistrationView(mixins.CreateModelMixin, generics.GenericAPIView):
     queryset = CustomUser.objects.all()
@@ -63,6 +64,14 @@ class FollowUserView(generics.GenericAPIView):
         if user_to_follow == request.user:
             return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
         request.user.following.add(user_to_follow)
+
+        # Create notification for the user being followed
+        Notification.objects.create(
+            recipient=user_to_follow,
+            actor=request.user,
+            verb='started following',
+            target=user_to_follow # The target is the user being followed
+        )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class UnfollowUserView(generics.GenericAPIView):
