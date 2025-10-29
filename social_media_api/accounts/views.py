@@ -1,12 +1,13 @@
-from rest_framework import generics, permissions, status
+from rest_framework import permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from .models import CustomUser
 from django.contrib.auth import get_user_model
+from rest_framework.generics import GenericAPIView
 
-class UserRegistrationView(generics.CreateAPIView):
+class UserRegistrationView(GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
@@ -35,7 +36,7 @@ class UserLoginView(ObtainAuthToken):
             'email': user.email
         })
 
-class UserProfileView(generics.RetrieveUpdateAPIView):
+class UserProfileView(GenericAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -43,7 +44,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-class FollowUserView(generics.GenericAPIView):
+class FollowUserView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
     lookup_field = 'pk'
@@ -55,7 +56,7 @@ class FollowUserView(generics.GenericAPIView):
         request.user.following.add(user_to_follow)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class UnfollowUserView(generics.GenericAPIView):
+class UnfollowUserView(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = get_user_model().objects.all()
     lookup_field = 'pk'
